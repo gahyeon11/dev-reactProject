@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
+import TodoModal from "./TodoModal";
 
 type Todo = {
   id: number;
   text: string;
   isChecked: boolean;
 };
-
-//React.FC : 함수형 컴포넌트를 정의 할 때 리액트에서 사용하는 것으로
-//코드를 더 명확하게 표현하기 위해서 사용
 
 const Todolist: React.FC = () => {
   const title: string = "To Do List";
@@ -19,14 +17,10 @@ const Todolist: React.FC = () => {
   ]);
   const [newTodo, setnewTodo] = useState<string>("");
 
-  //state : 상태관리를 위해서 사용하는 것으로
-  // 상태가 변경이 되면 변수 Todos에 바로 반영시키위해서 useState 훅을 사용한다.
-  // 데이터가 변경이 되면 자동으로 재렌더링 시켜준다.
-
-  //setTodos : 변경 함수
-  //<string[]> : 문자열 배열 자료형
-
-  //구조분해 할당 : 각 배열내 데이터를 나눠서 데이터로 넣어준다.
+  const[showDetail, setShowDetail] = useState<boolean>(false);
+  //선택 여부 담기 위한 state
+  const[selectedTodo, setSelectedTodo] = useState<Todo | null>(null); 
+  //선택한 todo의 정보 담기 위한 state
 
   const handleCheckedChange = (itemId: number) => {
     setTodos((prevItems) =>
@@ -47,6 +41,15 @@ const Todolist: React.FC = () => {
   const removeTodo = (id: number) => {
     setTodos(todos.filter((todo) => todo.id !== id))
   };
+
+  const handleTodoClick = (todo : Todo)=>{
+    setShowDetail(true);
+    setSelectedTodo(todo);
+    
+  }
+  const handleCloseDetail = ()=>{
+    setShowDetail(false);
+  }
 
   return (
     <div>
@@ -76,7 +79,8 @@ const Todolist: React.FC = () => {
                     handleCheckedChange(todo.id);
                   }}
                 ></input>
-                <span>
+    
+                <span onClick={()=>handleTodoClick(todo)}>
                   {todo.isChecked ? (
                     <del>{todo.text}</del>
                   ) : (
@@ -94,6 +98,7 @@ const Todolist: React.FC = () => {
           </ul>
         </div>
       </div>
+      <TodoModal show ={showDetail} todo = {selectedTodo} handleCLose= {handleCloseDetail}></TodoModal>
     </div>
   );
 };
