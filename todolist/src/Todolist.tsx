@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "react-bootstrap";
 
 type Todo = {
   id: number;
@@ -16,6 +17,8 @@ const Todolist: React.FC = () => {
     { id: 2, text: "잠자기", isChecked: false },
     { id: 3, text: "미팅하기", isChecked: false },
   ]);
+  const [newTodo, setnewTodo] = useState<string>("");
+
   //state : 상태관리를 위해서 사용하는 것으로
   // 상태가 변경이 되면 변수 Todos에 바로 반영시키위해서 useState 훅을 사용한다.
   // 데이터가 변경이 되면 자동으로 재렌더링 시켜준다.
@@ -33,11 +36,36 @@ const Todolist: React.FC = () => {
     );
   };
 
+  const addTodo = () => {
+    if (newTodo.trim() !== "") {
+      //빈 값인지 검사하는 trim
+      setTodos([...todos, { id: Date.now(), text: newTodo, isChecked: false }]);
+      setnewTodo("");
+    }
+  };
+
+  const removeTodo = (id: number) => {
+    setTodos(todos.filter((todo) => todo.id !== id))
+  };
+
   return (
     <div>
       <h1>{title}</h1>
       <p></p>
       <div className="containter">
+        <div>
+          <input
+            type="text"
+            placeholder="할일 입력"
+            style={{ marginRight: "10px", writingMode: "horizontal-tb" }}
+            onChange={(e) => setnewTodo(e.target.value)}
+          />
+          <Button variant="success" onClick={addTodo}>
+            추가
+          </Button>
+        </div>
+        <p></p>
+
         <div className="board">
           <ul>
             {todos.map((todo, index) => (
@@ -55,6 +83,12 @@ const Todolist: React.FC = () => {
                     <span>{todo.text}</span>
                   )}
                 </span>
+                <button
+                  onClick={() => removeTodo(todo.id)}
+                  className="delbutton"
+                >
+                  삭제
+                </button>
               </li>
             ))}
           </ul>
